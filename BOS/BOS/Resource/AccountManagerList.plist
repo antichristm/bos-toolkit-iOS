@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<array>
+		<dict>
+			<key>id</key>
+			<string>2</string>
+			<key>title</key>
+			<string>导出Keystore</string>
+			<key>leftImg</key>
+			<string>zhanghao_icon_xiane_default</string>
+			<key>rightImg</key>
+			<string>bos_icon_fanhui_default</string>
+		</dict>
+	</array>
+	<array>
+		<dict>
+			<key>id</key>
+			<string>4</string>
+			<key>title</key>
+			<string>高级配置</string>
+			<key>leftImg</key>
+			<string>zhanghao_icon_shezhi_default</string>
+			<key>rightImg</key>
+			<string>bos_icon_fanhui_default</string>
+		</dict>
+	</array>
+</array>
+</plist>

@@ -1,0 +1,183 @@
+//
+//  PrefixHeader.pch
+//  BOS
+//
+//  Created by 梁唐 on 2018/12/11.
+//  Copyright © 2018 lingling. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#ifdef __OBJC__
+#pragma mark tool
+#import "Header.h"
+
+
+#pragma mark cocoapods
+#import "UIImage+GIF.h"
+#import "MJRefresh.h"
+#import <MJExtension.h>
+#import "UIImageView+WebCache.h"
+#import "UIButton+WebCache.h"
+#import "IQKeyboardManager.h"
+#import "AFNetworking.h"
+#import "MBProgressHUD.h"
+#import "XWHUDManager.h"
+#import "IQUIView+Hierarchy.h"
+#import "UIScrollView+EmptyDataSet.h"
+#import "Masonry.h"
+#import <YYText.h>
+#import "JPUSHService.h"
+#ifdef NSFoundationVersionNumber_iOS_9_x_Max
+#import <UserNotifications/UserNotifications.h>
+#endif
+
+
+#import <NS+BTCBase58.h>
+#import <BTCMnemonic.h>
+#import <BTCData.h>
+#import <BTCKeychain.h>
+#import <BTCKey.h>
+#import <BTCAddress.h>
+#import <NSData+BTCData.h>
+#import <BTCEncryptedBackup.h>
+#import <CommonCrypto/CommonCryptor.h>
+#import <CommonCrypto/CommonKeyDerivation.h>
+#import <Security/Security.h>
+#import "libscrypt.h"
+#import <NS+BTCBase58.h>
+
+#endif
+
+#define NullImage [UIImage imageNamed:@"msg_emptydata"]
+
+//红包相关数据
+#define KRedContractName  @"redpacket"
+#define KGetRedPacketName @"bosfreetouse"
+#define KGetRedPacketPermisson @"redpacket"
+#define KGetRedPacketPrivateKey @"5Jg3KtArcxdsk2opXpyBNqKeZ7ah9SFLPg2Xx8vHFGCnfRGffkD"
+
+#define EOSTOOLS [EOSTools shared]
+/*
+ http://47.254.82.241:80/v1/chain/get_info
+ http://47.254.134.167:80/v1/chain/get_info
+ http://49.129.133.66:80/v1/chain/get_info
+ http://8.208.9.182:80/v1/chain/get_info
+ http://47.91.244.124:80/v1/chain/get_info
+ http://120.197.130.117:8020/v1/chain/get_info
+ http://bos-testnet.meet.one:8888/v1/chain/get_info
+ http://bos-testnet.mytokenpocket.vip:8890/v1/chain/get_info
+ */
+//#define EOSIP @"http://api-mainnet.starteos.io"
+//#define EOSIP @"http://47.254.82.241:80"
+#define EOSIP @"https://api-bos.starteos.io"
+#define KeyWindow [UIApplication sharedApplication].keyWindow
+
+#define COLOR(a) [UIColor colorWithHexString:a]
+#define IMAGE(a) [UIImage imageNamed:a]
+#define TEXTCOLOR  COLOR(@"#333333")
+#define SUBJECTCOLOR COLOR(@"#228BE9")
+#define NAVIBARCOLOR COLOR(@"#FFFFFF")
+#define BACKGROUNDCOLOR COLOR(@"#F6F6F9")
+
+#define APPNAME [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"]
+#define APPVERSION [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]
+
+#define BOSPassSubstitute @"BOSPassSubstitute"
+#define BOSCode @"eosio.token"
+#define BOSSymbol @"BOS"
+#define BOSPassHint @"BOSPassHint"
+
+#pragma mark other app
+#define BOSCallFormat @"bostoolkit://bos?param="
+
+#pragma mark database tableName
+#define BOSDBAccountTableName @"BOSDBWalletTableName"
+#define BOSDBHistoryAccountTableName @"BOSDBHistoryAccountTableName"
+//宽高
+#define ScreenWidth [UIScreen mainScreen].bounds.size.width
+#define ScreenHeight [UIScreen mainScreen].bounds.size.height
+
+#define MyUIScreen  375
+
+#define FONT(A) [UIFont fontWithName:@"Helvetica" size:A * ScreenWidth/MyUIScreen]
+
+#define FONTNAME(N,A) [UIFont fontWithName:N size:A * ScreenWidth/MyUIScreen]
+
+
+#define WeakSelf(weakSelf)      __weak __typeof(&*self)    weakSelf  = self
+#define StrongSelf(strongSelf)  __strong __typeof(&*self) strongSelf = weakSelf
+
+#define ScreenHeight [UIScreen mainScreen].bounds.size.height
+#define ScreenWidth   [UIScreen mainScreen].bounds.size.width
+
+#define BOS_H(h)  [BOSTools ScaleHeight:h]
+#define BOS_W(w)  [BOSTools ScaleWidth:w]
+
+#define IS_IPHONE_X (ScreenWidth >= 375.f && ScreenHeight >= 812.f ? YES : NO)
+#define Height_StatusBar (IS_IPHONE_X?44.0f:20.0f)
+#define Height_NavBar    (IS_IPHONE_X?88.0f:64.0f)
+#define Height_TabBar    (IS_IPHONE_X?83.0f:49.0f)
+#define Height_Top       (IS_IPHONE_X?24.0f:0.0f)
+#define Height_Bottom    (IS_IPHONE_X?34.0f:0.0f)
+
+/**
+ *  object is nil or null
+ */
+#define IsNilOrNull(_ref)   (((_ref) == nil) || ([(_ref) isEqual:[NSNull null]]) || ([(_ref) isEqual:[NSNull class]]))
+
+
+#ifdef DEBUG
+#define NSLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], __LINE__, ##__VA_ARGS__)
+#else
+#define NSLog(...)
+#endif
+
+/**
+ *  the saving objects      存储对象
+ *
+ *  @param __VALUE__ V
+ *  @param __KEY__   K
+ *
+ *  @return
+ */
+#define UserDefaultSetObjectForKey(__VALUE__,__KEY__) \
+{\
+[[NSUserDefaults standardUserDefaults] setObject:__VALUE__ forKey:__KEY__];\
+[[NSUserDefaults standardUserDefaults] synchronize];\
+}
+#define UserDefaultSetDoubleForKey(__VALUE__,__KEY__) \
+{\
+[[NSUserDefaults standardUserDefaults] setDouble:__VALUE__ forKey:__KEY__];\
+[[NSUserDefaults standardUserDefaults] synchronize];\
+}
+#define UserDefaultSetIntegerForKey(__VALUE__,__KEY__) \
+{\
+[[NSUserDefaults standardUserDefaults] setInteger:__VALUE__ forKey:__KEY__];\
+[[NSUserDefaults standardUserDefaults] synchronize];\
+}
+#define UserDefaultSetBoolForKey(__VALUE__,__KEY__) \
+{\
+[[NSUserDefaults standardUserDefaults] setBool:__VALUE__ forKey:__KEY__];\
+[[NSUserDefaults standardUserDefaults] synchronize];\
+}
+/**
+ *  get the saved objects       获得存储的对象
+ */
+#define UserDefaultObjectForKey(__KEY__)  [[NSUserDefaults standardUserDefaults] objectForKey:__KEY__]
+#define UserDefaultDoubleForKey(__KEY__)  [[NSUserDefaults standardUserDefaults] doubleForKey:__KEY__]
+#define UserDefaultIntegerForKey(__KEY__)  [[NSUserDefaults standardUserDefaults] integerForKey:__KEY__]
+#define UserDefaultBoolForKey(__KEY__)  [[NSUserDefaults standardUserDefaults] boolForKey:__KEY__]
+#define UserDefaultArrayForKey(__KEY__)  [[NSUserDefaults standardUserDefaults] arrayForKey:__KEY__]
+/**
+ *  delete objects      删除对象
+ */
+#define UserDefaultRemoveObjectForKey(__KEY__) \
+{\
+[[NSUserDefaults standardUserDefaults] removeObjectForKey:__KEY__];\
+[[NSUserDefaults standardUserDefaults] synchronize];\
+}
+
+
+#endif /* PrefixHeader_pch */

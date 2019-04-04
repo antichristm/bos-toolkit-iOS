@@ -1,0 +1,220 @@
+if (!String.prototype.startsWith) {
+(function () {
+'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
+var defineProperty = (function () {
+// IE 8 only supports `Object.defineProperty` on DOM elements
+try {
+var object = {};
+var $defineProperty = Object.defineProperty;
+var result = $defineProperty(object, object, object) && $defineProperty;
+} catch (error) { }
+return result;
+}());
+var toString = {}.toString;
+var startsWith = function (search) {
+if (this == null) {
+throw TypeError();
+}
+var string = String(this);
+if (search && toString.call(search) == '[object RegExp]') {
+throw TypeError();
+}
+var stringLength = string.length;
+var searchString = String(search);
+var searchLength = searchString.length;
+var position = arguments.length > 1 ? arguments[1] : undefined;
+// `ToInteger`
+var pos = position ? Number(position) : 0;
+if (pos != pos) { // better `isNaN`
+pos = 0;
+}
+var start = Math.min(Math.max(pos, 0), stringLength);
+// Avoid the `indexOf` call if no match is possible
+if (searchLength + start > stringLength) {
+return false;
+}
+var index = -1;
+while (++index < searchLength) {
+if (string.charCodeAt(start + index) != searchString.charCodeAt(index)) {
+return false;
+}
+}
+return true;
+};
+if (defineProperty) {
+defineProperty(String.prototype, 'startsWith', {
+'value': startsWith,
+'configurable': true,
+'writable': true
+});
+} else {
+String.prototype.startsWith = startsWith;
+}
+}());
+}
+
+if (!String.prototype.endsWith) {
+String.prototype.endsWith = function (search, this_len) {
+if (this_len === undefined || this_len > this.length) {
+this_len = this.length;
+}
+return this.substring(this_len - search.length, this_len) === search;
+};
+}
+
+function Scatter() {
+this.eos = function (network, Eos, options) {
+var config = {
+httpEndpoint: network.protocol + "://" + network.host + ":" + network.port,
+chainId: network.chainId,
+expireInSeconds: 60,
+sign: true
+};
+try {
+if (this.identity && this.identity.accounts && this.identity.accounts.length > 0) {
+config.authorization = this.identity.accounts[0].name + "@" + this.identity.accounts[0].authority;
+}
+} catch (e) {
+}
+config.signProvider = function (param) {
+console.log("signProvider:" + JSON.stringify(param));
+return new Promise(function (resolve, reject) {
+window.signatureResolve = resolve;
+window.signatureReject = reject;
+var dic = {"network":network, "param" : param};
+window.webkit.messageHandlers.signatureProvider.postMessage(JSON.stringify(dic));
+});
+};
+if (config.httpEndpoint.endsWith(":")) {
+config.httpEndpoint = config.httpEndpoint.substring(0, config.httpEndpoint.length - 1);
+}
+if (config.httpEndpoint.startsWith("://")) {
+config.httpEndpoint = config.httpEndpoint.substring(4, config.httpEndpoint.length);
+}
+console.log("config:" + JSON.stringify(config));
+return Eos(config);
+};
+this.connect = function (pluginName, options) {
+return new Promise(function (resolve, reject) {
+window.connectResolve = resolve;
+var dic = {"pluginName" : pluginName, "options" : options};
+window.webkit.messageHandlers.connect.postMessage(JSON.stringify(dic));
+})
+};
+this.getIdentity = function (requiredFields) {
+var that = this;
+return new Promise(function (resolve, reject) {
+window.getIdentityResolve = function (data) {
+that.identity = JSON.parse(data);
+resolve(that.identity);
+};
+window.getIdentityReject = function (data) {
+reject(JSON.parse(data));
+};
+window.webkit.messageHandlers.getIdentity.postMessage(JSON.stringify(requiredFields));
+})
+};
+this.authenticate = function (random) {
+return new Promise(function (resolve, reject) {
+window.authenticateResolve = resolve;
+window.authenticateReject = reject;
+window.webkit.messageHandlers.authenticate.postMessage(random);
+})
+};
+this.forgetIdentity = function () {
+return new Promise(function (resolve, reject) {
+window.forgetIdentityResolve = resolve;
+window.webkit.messageHandlers.forgetIdentity.postMessage();
+})
+};
+this.suggestNetwork = function (network) {
+return new Promise(function (resolve, reject) {
+window.suggestNetworkResolve = resolve;
+window.webkit.messageHandlers.suggestNetwork.postMessage(JSON.stringify(network));
+})
+};
+this.requestSignature = function (signature) {
+return new Promise(function (resolve, reject) {
+window.requestSignatureResolve = function (param) {
+resolve(JSON.parse(param));
+};
+window.requestSignatureReject = reject;
+window.webkit.messageHandlers.requestSignature.postMessage(JSON.stringify(signature));
+})
+};
+this.requestTransfer = function (network, to, amount, tokenDetails) {
+return new Promise(function (resolve, reject) {
+window.requestTransferResolve = function (param) {
+resolve(JSON.parse(param));
+};
+window.requestTransferReject = reject;
+window.scatterNative.requestTransfer(JSON.stringify(network), to, amount, JSON.stringify(tokenDetails));
+})
+};
+this.getPublicKey = function (blockchain) {
+return new Promise(function (resolve, reject) {
+window.getPublicKeyResolve = resolve;
+window.getPublicKeyReject = reject;
+window.webkit.messageHandlers.getPublicKey.postMessage(JSON.stringify(blockchain));
+})
+};
+this.linkAccount = function (publicKey, network) {
+return new Promise(function (resolve, reject) {
+window.linkAccountResolve = resolve;
+window.linkAccountReject = reject;
+var dic = {"publicKey" : publicKey,"param" : network};
+window.webkit.messageHandlers.linkAccount.postMessage(JSON.stringify(dic));
+})
+};
+this.getArbitrarySignature = function (publicKey, data) {
+return new Promise(function (resolve, reject) {
+window.getArbitrarySignatureResolve = resolve;
+window.getArbitrarySignatureReject = reject;
+var dic = {"publicKey":publicKey, "param" : data};
+window.webkit.messageHandlers.getArbitrarySignature.postMessage(JSON.stringify(dic));
+})
+};
+this.getVersion = function () {
+return new Promise(function (resolve, reject) {
+resolve("10.0.1")
+})
+};
+this.isExtension = true;
+}
+
+if (("undefined" != typeof window.injectScatter) && window.injectScatter != null && window.injectScatter == 1) {
+console.log("scatter is injected")
+} else {
+window.scatter = new Scatter();
+window.injectScatter = 1;
+document.dispatchEvent(new Event("scatterLoaded"));
+}
+
+var themeColor = document.querySelector("meta[name='theme-color']");
+if (themeColor) {
+var colorStr = themeColor.getAttribute("content");
+if (!colorStr.startsWith("#")) {
+var color = colorStr.toString().match(/\d+/g); // 把 x,y,z 推送到 color 数组里
+var hex = "#";
+for (var i = 0; i < 3; i++) {
+// 'Number.toString(16)' 是JS默认能实现转换成16进制数的方法.
+// 'color[i]' 是数组，要转换成字符串.
+// 如果结果是一位数，就在前面补零。例如： A变成0A
+hex += ("0" + Number(color[i]).toString(16)).slice(-2);
+}
+colorStr = hex;
+}
+var themeJson = {
+namespace: "gui",
+function: "changeStatusBar",
+callback: "default",
+params: {
+title: "",
+color: colorStr,
+canGoBack: true,
+theme: ""
+}
+}
+window.webkit.messageHandlers.dappApi.postMessage(JSON.stringify(themeJson))
+//window.dappApi.request(JSON.stringify(themeJson))
+}
