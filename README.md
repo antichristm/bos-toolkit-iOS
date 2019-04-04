@@ -1,4 +1,4 @@
-# BOS Toolkit
+# BOS ToolKit
 
 ### 项目介绍
 BOS 工具箱
@@ -43,7 +43,7 @@ BOS 工具箱
     {
         action = getAccount;
         data =     {
-            keys = 5KbC6YTVGAcQ6JJoszBgEK7qhKaZ8317DripawYGpF5z5WD2zKz;
+            keys = 5Jxxxxxxxxxxxxx;//私钥
         };
     }
 
